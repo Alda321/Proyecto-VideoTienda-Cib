@@ -1,7 +1,6 @@
 package com.videotec.videotienda.Service;
 
 import com.videotec.videotienda.Models.User;
-import com.videotec.videotienda.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
