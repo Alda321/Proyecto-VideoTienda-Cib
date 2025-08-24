@@ -9,7 +9,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/productos")
-@CrossOrigin(origins = "*") // Para permitir acceso desde front-end (por ejemplo, React o Angular)
 public class ProductoRestController {
 
     @Autowired

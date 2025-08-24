@@ -1,4 +1,4 @@
-package Service.Impl;
+package com.videotec.videotienda.Service.Impl;
 
 import com.videotec.videotienda.Models.Producto;
 import com.videotec.videotienda.Repository.ProductoRepository;
