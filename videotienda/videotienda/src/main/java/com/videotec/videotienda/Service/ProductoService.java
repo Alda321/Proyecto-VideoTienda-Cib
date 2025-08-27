@@ -8,5 +8,7 @@ public interface ProductoService {
     Producto guardar(Producto producto);
     Producto obtenerPorId(Long id);
     void eliminar(Long id);
+    Producto actualizarProducto(Long id, Producto productoActualizado);
+
 }
 

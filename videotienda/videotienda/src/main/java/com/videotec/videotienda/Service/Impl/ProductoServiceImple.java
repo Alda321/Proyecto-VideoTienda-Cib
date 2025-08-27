@@ -35,4 +35,20 @@ public class ProductoServiceImple implements ProductoService {
     public void eliminar(Long id) {
         productoRepository.deleteById(id);
     }
+
+    public Producto actualizarProducto(Long id, Producto productoActualizado) {
+        Optional<Producto> productoExistente = productoRepository.findById(id);
+
+        if (productoExistente.isPresent()) {
+            Producto producto = productoExistente.get();
+            producto.setNombre(productoActualizado.getNombre());
+            producto.setTipo(productoActualizado.getTipo());
+            producto.setPrecio(productoActualizado.getPrecio());
+            producto.setStock(productoActualizado.getStock());
+
+            return productoRepository.save(producto);
+        } else {
+            throw new RuntimeException("Producto no encontrado con id " + id);
+        }
+    }
 }
