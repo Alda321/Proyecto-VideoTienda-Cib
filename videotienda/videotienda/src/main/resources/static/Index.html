@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Administrador</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f8f9fa; }
+        nav {
+            background: #343a40;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        nav h1 { color: #fff; margin: 0; font-size: 20px; }
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+        nav ul li {
+            margin-left: 20px;
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.2s;
+        }
+        nav ul li a:hover {
+            color: #ffc107;
+        }
+        main {
+            padding: 40px;
+            text-align: center;
+        }
+        h2 {
+            color: #343a40;
+        }
+        .card {
+            display: inline-block;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px;
+            box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+            width: 250px;
+        }
+        .card h3 {
+            margin-top: 0;
+            color: #343a40;
+        }
+        .card a {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 15px;
+            background: #007bff;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .card a:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <h1>Panel de Administración</h1>
+    <ul>
+        <li><a href="clientes.html">Clientes</a></li>
+        <li><a href="peliculas.html">Películas</a></li>
+        <li><a href="ventas.html">Ventas</a></li>
+    </ul>
+</nav>
+
+<main>
+    <h2>Bienvenido Administrador</h2>
+    <p>Selecciona una de las opciones para gestionar el sistema:</p>
+
+    <div class="card">
+        <h3>Clientes</h3>
+        <p>Gestión de clientes registrados.</p>
+        <a href="clientes.html">Ir a Clientes</a>
+    </div>
+
+    <div class="card">
+        <h3>Películas</h3>
+        <p>Gestión del catálogo de películas.</p>
+        <a href="peliculas.html">Ir a Películas</a>
+    </div>
+
+    <div class="card">
+        <h3>Ventas</h3>
+        <p>Gestión de ventas realizadas.</p>
+        <a href="ventas.html">Ir a Ventas</a>
+    </div>
+</main>
+
+</body>
+</html>

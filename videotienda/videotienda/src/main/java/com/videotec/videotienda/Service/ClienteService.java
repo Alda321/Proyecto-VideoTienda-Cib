@@ -11,4 +11,7 @@ public interface ClienteService {
     Cliente guardar(Cliente cliente);
     Cliente actualizar(Long id, Cliente cliente);
     void eliminar(Long id);
+    Cliente login(String correo, String password);
+
+
 }

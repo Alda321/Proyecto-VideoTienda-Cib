@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Películas</title>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+          background: #f8f9fa;
+        }
+        .navbar-brand {
+          font-weight: bold;
+          letter-spacing: 1px;
+        }
+        .card {
+          border-radius: 1rem;
+        }
+        .table thead {
+          background: #0d6efd;
+          color: white;
+        }
+        .btn-action {
+          margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Admin Películas</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="ventas.html">Ventas</a></li>
+                <li class="nav-item"><a class="nav-link" href="clientes.html">Clientes</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.html">Regresar</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container my-4">
+    <div class="row">
+        <!-- Tabla de Películas -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Listado de Películas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="tablaPeliculas" class="table table-hover align-middle">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Título</th>
+                                <th>Género</th>
+                                <th>Fecha Estreno</th>
+                                <th>Precio</th>
+                                <th>Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario -->
+        <div class="col-lg-4">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h5 id="formTitulo" class="mb-0">Agregar Película</h5>
+                </div>
+                <div class="card-body">
+                    <form id="formPelicula">
+                        <input type="hidden" name="id" id="peliculaId">
+
+                        <div class="mb-3">
+                            <label class="form-label">Título</label>
+                            <input type="text" name="titulo" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Género</label>
+                            <select name="generoId" id="generoSelect" class="form-select" required></select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Fecha Estreno</label>
+                            <input type="date" name="fechaEstreno" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Precio</label>
+                            <input type="number" name="precio" class="form-control" step="0.01" min="0" required>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-success">Guardar</button>
+                            <button type="button" class="btn btn-secondary" onclick="cancelarEdicion()">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    const apiUrlPeliculas = 'http://localhost:8080/api/peliculas';
+    const apiUrlGeneros = 'http://localhost:8080/api/generos';
+    const authHeader = 'Basic ' + btoa('admin:admin');
+
+    async function cargarGeneros() {
+        try {
+            const res = await fetch(apiUrlGeneros, { headers: { 'Authorization': authHeader } });
+            const text = await res.text();
+            const generos = text ? JSON.parse(text) : [];
+            const select = document.getElementById('generoSelect');
+            select.innerHTML = '<option value="">Seleccione género</option>';
+            generos.forEach(g => {
+                const option = document.createElement('option');
+                option.value = g.id;
+                option.textContent = g.nombre;
+                select.appendChild(option);
+            });
+        } catch (err) {
+            console.error(err);
+            alert('Error cargando géneros');
+        }
+    }
+
+    async function cargarPeliculas() {
+        try {
+            const res = await fetch(apiUrlPeliculas, { headers: { 'Authorization': authHeader } });
+            const text = await res.text();
+            const peliculas = text ? JSON.parse(text) : [];
+            const tbody = document.querySelector('#tablaPeliculas tbody');
+            tbody.innerHTML = '';
+            peliculas.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${p.id}</td>
+                    <td>${p.titulo}</td>
+                    <td>${p.genero ? p.genero.nombre : 'Sin género'}</td>
+                    <td>${p.fechaEstreno ?? ''}</td>
+                    <td>${p.precio ?? ''}</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning btn-action" onclick="editarPelicula(${p.id}, '${p.titulo}', ${p.genero ? p.genero.id : null}, '${p.fechaEstreno}', ${p.precio})">Editar</button>
+                        <button class="btn btn-sm btn-danger" onclick="eliminarPelicula(${p.id})">Eliminar</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } catch (err) {
+            console.error(err);
+            alert('Error cargando películas');
+        }
+    }
+
+    document.getElementById('formPelicula').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = e.target.id.value;
+        const pelicula = {
+            titulo: e.target.titulo.value,
+            genero: { id: parseInt(e.target.generoId.value) },
+            fechaEstreno: e.target.fechaEstreno.value,
+            precio: parseFloat(e.target.precio.value)
+        };
+
+        try {
+            let url = apiUrlPeliculas;
+            let method = 'POST';
+
+            if (id) {
+                url = `${apiUrlPeliculas}/${id}`;
+                method = 'PUT';
+            }
+
+            const res = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': authHeader
+                },
+                body: JSON.stringify(pelicula)
+            });
+
+            if (!res.ok) {
+                const errorText = await res.text();
+                throw new Error(errorText || 'Error al guardar película');
+            }
+
+            alert(id ? 'Película actualizada con éxito' : 'Película registrada con éxito');
+            e.target.reset();
+            document.getElementById("peliculaId").value = "";
+            document.getElementById("formTitulo").textContent = "Agregar Película";
+            cargarPeliculas();
+        } catch (err) {
+            console.error(err);
+            alert('No se pudo guardar la película: ' + err.message);
+        }
+    });
+
+    function editarPelicula(id, titulo, generoId, fechaEstreno, precio) {
+        document.getElementById("peliculaId").value = id;
+        document.querySelector("input[name='titulo']").value = titulo;
+        document.querySelector("select[name='generoId']").value = generoId;
+        document.querySelector("input[name='fechaEstreno']").value = fechaEstreno;
+        document.querySelector("input[name='precio']").value = precio;
+        document.getElementById("formTitulo").textContent = "Editar Película";
+    }
+
+    function cancelarEdicion() {
+        document.getElementById("formPelicula").reset();
+        document.getElementById("peliculaId").value = "";
+        document.getElementById("formTitulo").textContent = "Agregar Película";
+    }
+
+    async function eliminarPelicula(id) {
+        if (!confirm("¿Seguro que deseas eliminar esta película?")) return;
+        try {
+            const res = await fetch(`${apiUrlPeliculas}/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': authHeader }
+            });
+
+            if (!res.ok) throw new Error("Error al eliminar película");
+
+            alert("Película eliminada con éxito");
+            cargarPeliculas();
+        } catch (err) {
+            console.error(err);
+            alert("No se pudo eliminar la película: " + err.message);
+        }
+    }
+
+    window.onload = () => {
+        cargarGeneros();
+        cargarPeliculas();
+    };
+</script>
+
+</body>
+</html>

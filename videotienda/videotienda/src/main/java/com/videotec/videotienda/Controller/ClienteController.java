@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:63342")
@@ -45,4 +46,18 @@ public class ClienteController {
         clienteService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
+        String correo = body.get("correo");
+        String password = body.get("password");
+
+        try {
+            Cliente cliente = clienteService.login(correo, password);
+            return ResponseEntity.ok(cliente);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(401).body("Credenciales inválidas");
+        }
+    }
+
 }

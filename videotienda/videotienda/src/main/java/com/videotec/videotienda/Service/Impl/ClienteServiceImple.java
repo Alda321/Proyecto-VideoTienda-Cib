@@ -46,4 +46,12 @@ public class ClienteServiceImple implements ClienteService {
     public void eliminar(Long id) {
         clienteRepository.deleteById(id);
     }
+
+    @Override
+    public Cliente login(String correo, String password) {
+        return clienteRepository.findByCorreo(correo)
+                .filter(c -> c.getPassword().equals(password))
+                .orElseThrow(() -> new RuntimeException("Credenciales inválidas"));
+    }
+
 }

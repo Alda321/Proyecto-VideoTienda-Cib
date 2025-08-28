@@ -45,4 +45,7 @@ public class Cliente {
     public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
+    private String password;
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 }
